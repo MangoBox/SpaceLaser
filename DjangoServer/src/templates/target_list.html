@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="row posts flex-grow justify-content-between" style="row-gap: 3rem;">
+    {% for target in objects %}
+    <div class="card" style="width: 18rem;">
+        <img class="card-img-top rounded" style="object-fit: cover;  height: 10vw;"  src="{{ target.img.url }}" alt="Card image cap">
+        <div class="card-body" >
+            <!-- <h3 class="bi-bullseye" style="font-size: 2rem; color: blue;"> Planet</h3> -->
+            <!-- <p>{{ target.title }}</p> -->
+            <!-- <img src="{% static 'scope_logo_white.png' %}" height="40px" /> -->
+            <h4 class="card-title">{{target.title}}</h4>
+            {% if target.type == "RS"%}
+            <p class="bi-broadcast-pin" style="color: red;"> Radio Source</p>
+            {% elif target.type == "PL"%}
+            <p class="bi-globe2" style="color: green;"> Planet</p>
+            {% elif target.type == "DSO"%}
+            <p class="bi-stars" style="color: blue;"> Deep Space</p>
+            {% elif target.type == "NEO"%}
+            <p class="bi-question-circle-fill" style="color: black;"> Asteroid/NEO</p>
+            {% endif %}
+
+            
+            <p class="card-text"><b>RA:</b> {{target.ra}}</p>
+            <p class="card-text"><b>DEC:</b> {{target.dec}}</p>
+            <span>
+                <a href="#" class="btn btn-primary"><nobr class="bi-send"> Slew</nobr></a>
+                <a href="#" style="" class="card-link">  <a class="bi-question-circle-fill" style="padding: 1rem;">More Info</a>
+            </span>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
