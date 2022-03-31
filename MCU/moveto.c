@@ -13,13 +13,13 @@ int NUM_DATAPT = 50;
 
 /*****************************************************************
 FUNCTION DECLARATION:
+Step calc (how do you move motors)
 Caclculating Acceleration
 Calc Deceleration?
 Current velocity
 Communication x 7
 Calc Current pos
 Defining path
-Step calc (how do you move motors)
 *****************************************************************/
 /*Function to calculate delta co*/
 horizon_co calulate_delta (horizon_co, horizon_co);
