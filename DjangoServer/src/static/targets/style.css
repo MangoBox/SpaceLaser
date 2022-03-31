@@ -1,0 +1,13 @@
+.cssCSS
+
+.container {
+ margin-top: 10%;
+}
+.row{
+  height: 500px;
+}
+ 
+.vsplitbar {
+ width: 4px;
+ background: #ff3f3f;
+}
