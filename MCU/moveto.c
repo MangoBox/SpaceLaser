@@ -13,7 +13,7 @@ GLOBAL VARIABLES:
 FUNCTION DECLARATION
 *****************************************************************/
 /*Function to calculate delta co*/
-struct horizon_co calulate_delta (horizon_co, horizon_co);
+horizon_co calulate_delta (horizon_co, horizon_co);
 
 
 int main(void){
@@ -27,7 +27,7 @@ int main(void){
 FUNCTIONS
 *****************************************************************/
 
-struct horizon_co calulate_delta(horizon_co current_co, horizon_co future_co){
+horizon_co calulate_delta(horizon_co current_co, horizon_co future_co){
 /*Local variable*/
 horizon_co delta_co;
 /*Function*/
