@@ -1,25 +1,24 @@
 import datetime
 import math
-
-# Intialise location
-latitude = 0
-longlitude = 0
+import pytz
 
 # Intitialise keplarian elements
 class planet:
-    def __init__(self, a, e, i, w, Omega, M_0, datetimeInitial):
+    def __init__(self, a, e, i, w, Omega, M_0, dtInit):
         self.a = a
         self.e = e
         self.i = i       
         self.w = w
         self.Omega = Omega
         self.M_0 = Omega
-        self.datetimeInitial = datetimeInitial
+        self.dtInit = dtInit
     
-    def meanAnomaly(datetimeObservation):
+    def meanAnomaly(dtLCL):
         n = 0.9856076686/(a**(3/2))
-        diff  = self.datetimeObservation - self.datetimeInitial
-        M = self.M_0 + n*diff
+        tzdiff = tzDiff()
+        
+        diff  = (dtLCL + tzdiff) - self.dtInit
+        M = self.M_0 + n*diff # CHECK THIS
         M = M % 360
         return math.radian(M)
         # Output M in radians for simplicity
@@ -59,15 +58,17 @@ class planet:
         z = r * math.sin(i) * math.sin (w + v)
         return x, y, z
 
-    def sidrealTime(M, longlitude, datetimeObservation):
+    def sidrealTime(M, longlitude, dtLCL):
         Pi = math.radians(self.Omega) + math.radians(self.w)
         Pi = math.radians(math.degrees(Pi) % 360) 
 
-        time = time(datetimeObservation)
+        time = time(dtLCL)
         # MAGIC BOX FIX LATER
+        time = dtLCL.time # CHECK THIS
+        time  = (time.hours()*60*60 + time.minutes()*60 + time.seconds())/(24*60*60)
 
-        Theta = M + Pi + 15 * time
-        Theta = math.radians(math.degrees(Theta) % 360)
+        Theta = math.degrees(M) + math.degrees(Pi) + 15 * time
+        Theta = math.radians(Theta % 360)
 
         theta = Theta - math.radians(longlitude) 
         theta = math.radians(math.degrees(theta) % 360)
@@ -102,7 +103,11 @@ def hourAngle(theta, alpha, delta, latitude):
     h = math.degrees(h)
 
     return A, h
+    # Output returned in degrees for embedded team
 
+def tzDiff():
+    tzdiff = (datetime.utcnow() - datetime.now())
+    return tzdiff
 
 ### MAIN SCRIPT
 a = 5.20260
@@ -112,4 +117,38 @@ w = 273.867
 Omega = 100.464
 M_0 = 20.020
 
-jupiter = planet(a, e, i, w, Omega, M_0, )
+
+#datetimeInitial = datetime.datetime(2000, 1, 1, 0, 0, 0)
+#datetimeObervation = datetime.datetime(2004, 1, 1, 0, 0, 0)
+tzdiff = (datetime.utcnow() - datetime.now()) # Time zone difference between LCL and UTC
+
+dtInit = datetime.datetime(2000, 1, 1, 0, 0, 0) # Initial time (UTC)
+dtLCL = datetime.now() # Local time
+
+# Intialise location
+latitude = 151
+longlitude = -33
+
+jupiter = planet(a, e, i, w, Omega, M_0, dtInit)
+earth  =  planet(1.00000, 0.01671, 0.000, 288.064, 174.873, 357.529, dtInit)
+epsilon = 23.4397
+
+Mj = jupiter.meanAnomaly(dtLCL)
+Ej = jupiter.keplerEq(Mj)
+vj = jupiter.trueAnomaly(Ej, Mj)
+rj = jupiter.distFromSun(vj)
+xj, yj, zj = jupiter.rectangularHelioCoords(vj, rj)
+thetaj = sidrealTime(Mj, longlitude, dtLCL)
+
+Me = earth.meanAnomaly(dtLCL)
+Ee = earth.keplerEq(Me)
+ve = earth.trueAnomaly(Ee, Me)
+re = earth.distFromSun(ve)
+xe, ye, ze = earth.rectangularHelioCoords(ve, re)
+
+x, y, z = plantet2Planet(xj, yj, zj, xe, ye, ze)
+lambdaVal, beta = geoElipLongLat(x, y, z)
+alpha, delta = equatorialCoords(lambdaVal, beta, epsilon)
+A, h =  hourAngle(theta, alpha, delta, latitude)
+
+print(A + ',' + h)
