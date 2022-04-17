@@ -6,12 +6,13 @@ import requests
 # Define API URL and SPK filename:
 url = 'https://ssd.jpl.nasa.gov/api/horizons_file.api'
 spk_filename = 'spk_file.bsp'
+file = 'documents/GitHib/SpaceLaser/input.txt'
 
 # Get the Horizons API input file from the command-line:
 try:
-  f = open(sys.argv[1])
+    f = open(file)
 except OSError as err:
-  print("Unable to open input file '{0}': {1}".format(sys.argv[1], err))
+  print("Unable to open input file '{0}': {1}".format(file, err))
 
 # Build and submit the API request and decode the JSON-response:
 response = requests.post(url, data={'format':'json'}, files={'input': f})
