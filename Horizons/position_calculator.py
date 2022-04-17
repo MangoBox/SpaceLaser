@@ -1,6 +1,5 @@
 import datetime
 import math
-import pytz
 
 # Intitialise keplarian elements
 class planet:
@@ -15,19 +14,19 @@ class planet:
     
     def meanAnomaly(self, dtLCL):
         n = 0.9856076686/(self.a**(3/2))
-        #tzdiff = tzDiff()
+        # tzdiff = tzDiff()
         # FIX
         
-        datetime.timedelta(hours = -69891)
+        tzdiff = datetime.timedelta(hours = -1)
         dtLCLutc = dtLCL + tzdiff
         diff  = dtLCLutc - self.dtInit
         diff  = dtLCLutc - self.dtInit
+        
         # CONVERT DIF TO A DECIMAL POINT
         diff_float = diff.total_seconds()/(60*60*24) # In Days
+        print("diff = " +  str(diff_float))
         M = self.M_0 + n*diff_float# CHECK THIS
         M = M % 360
-        print("M: " + str(math.degrees(M) % 360))
-        print("M_0: " + str(math.degrees(M_0) % 360))
         return math.radians(M)
 
         # Output M in radians for simplicity
@@ -36,22 +35,23 @@ class planet:
         E_0 = M + self.e  * math.sin(M) * (1 + self.e * math.cos(M))
         E = E_0 - (E_0 - self.e * math.sin(E_0) - M)/(1 - self.e * math.cos(E_0))
 
-        while (math.fabs(E_0 - E) > 0.000001):
+        while (math.fabs(E_0 - E) > 0.0000001):
             E_0 = E
             E = E_0 - (E_0 - self.e * math.sin(E_0) - M)/(1 - self.e * math.cos(E_0))
+        
         return E
         # Note that E is in radians
     
     def trueAnomaly(self, E, M):
-        v = math.atan2(self.a * math.sqrt(1 - self.e**2) * math.sin(E), self.a * math.cos(E) - self.e)
-        
+        tau_e = math.tan(E/2)
+        v = 2*math.atan(math.sqrt((1+e) / (1-e))* tau_e )
         v = math.degrees(v)
         
         v = v % 360
         if (v < 0):
             v = v+360
-        v = math.radians(v)
-        return v
+        
+        return math.radians(v)
         # Note v is returned in radians for future calculations
     
     def distFromSun(self, v):
@@ -59,29 +59,34 @@ class planet:
         return r
 
     def rectangularHelioCoords(self, v, r):
-        Omega = math.radians(self.Omega)
-        w = math.radians(self.w)
-        i = math.radians(self.i)
-        x = r * (math.cos(Omega) * math.cos(w + v) - math.sin(Omega) * math.cos(i) * math.sin(w+v))
-        y = r * (math.sin(Omega) * math.cos(w + v) + math.cos(Omega) * math.cos(i) * math.sin(w+v))
-        z = r * math.sin(i) * math.sin (w + v)
-        return x, y, z
+        Omegatemp = math.radians(self.Omega)
+        wtemp = math.radians(self.w)
+        itemp = math.radians(self.i)
+        print("v, r = " + str(v) + ", " +str(r))
+
+        xp = r * (math.cos(Omegatemp) * math.cos(wtemp + v) - math.sin(Omegatemp) * math.cos(itemp) * math.sin(wtemp+v))
+        yp = r * (math.sin(Omegatemp) * math.cos(wtemp + v) + math.cos(Omegatemp) * math.cos(itemp) * math.sin(wtemp+v))
+        zp = r * math.sin(itemp) * math.sin (wtemp + v)
+        return xp, yp, zp
 
     def sidrealTime(self, M, longlitude, dtLCL):
         Pi = math.radians(self.Omega) + math.radians(self.w)
         Pi = math.radians(math.degrees(Pi) % 360) 
 
         time = dtLCL.time()
+        print("M = " + str(math.degrees(M)))
         time  = (time.hour*60*60 + time.minute*60 + time.second)/(60*60) # Time in hours 
+        print("time = " + str((time)))
 
         #tzdiff = tzDiff()
         tzdiff = - 1
 
         Theta = math.degrees(M) + math.degrees(Pi) + 15 * (time + tzdiff)
-        print("Theta: " + str(Theta % 360))
-        print("M: " + str(math.degrees(M) % 360))
-        print("Theta: " + str(Theta % 360))
+        # print("Theta: " + str(Theta % 360))
+
         Theta = math.radians(Theta % 360)
+
+        print("Theta = " + str(math.degrees(Theta)))
 
         theta = Theta - math.radians(longlitude) 
         theta = math.radians(math.degrees(theta) % 360)
@@ -102,17 +107,19 @@ def geoElipLongLat(x, y, z):
     # Note that the output from the function is in radians
 
 def equatorialCoords(lambdaVal, beta, epsilon):
+    # epsilon given in radians
     delta  = math.asin(math.sin(beta) * math.cos(epsilon) + math.cos(beta) * math.sin(epsilon) * math.sin(lambdaVal))
-    alpha = math.atan2(math.sin(lambdaVal) * math.cos(epsilon) + math.tan(beta) * math.sin(epsilon), math.cos(lambdaVal))
+    alpha = math.atan2(math.sin(lambdaVal) * math.cos(epsilon) - math.tan(beta) * math.sin(epsilon), math.cos(lambdaVal))
     return alpha, delta
 
 def hourAngle(theta, alpha, delta, latitude):
     H = theta - alpha
+    print("H = " + str(math.degrees(H)))
 
-    A = math.atan2(math.sin(H), math.cos(H) * math.sin(latitude) - math.tan(delta) * math.cos(latitude)) 
+    A = math.atan2(math.sin(H), math.cos(H) * math.sin(math.radians(latitude)) - math.tan(delta) * math.cos(math.radians(latitude))) 
     A = math.degrees(A)
 
-    h = math.asin(math.sin(latitude) * math.sin(delta) + math.cos(latitude) * math.cos(delta) * math.cos(H))
+    h = math.asin(math.sin(math.radians(latitude)) * math.sin(delta) + math.cos(math.radians(latitude)) * math.cos(delta) * math.cos(H))
     h = math.degrees(h)
 
     return A, h
@@ -135,7 +142,7 @@ M_0 = 20.020
 #datetimeObervation = datetime.datetime(2004, 1, 1, 0, 0, 0)
 tzdiff = tzDiff() # Time zone difference between LCL and UTC
 
-dtInit = datetime.datetime(2000, 1, 1, 0, 0, 0) # Initial time (UTC)
+dtInit = datetime.datetime(2000, 1, 1, 12, 0, 0) # Initial time (UTC)
 #dtLCL = datetime.datetime.now() # Local time
 dtLCL = datetime.datetime(2004, 1, 1, 1, 0, 0)
 
@@ -145,36 +152,45 @@ longlitude = -5
 
 jupiter = planet(a, e, i, w, Omega, M_0, dtInit)
 earth  =  planet(1.00000, 0.01671, 0.000, 288.064, 174.873, 357.529, dtInit)
-epsilon = 23.4397
+epsilon = math.radians(23.4397)
 
 Mj = jupiter.meanAnomaly(dtLCL)
-print(math.degrees(Mj))
+print("Mj = " + str(math.degrees(Mj)))
 
 Ej = jupiter.keplerEq(Mj)
+print("Ej = " + str(math.degrees(Ej)))
 vj = jupiter.trueAnomaly(Ej, Mj)
-print(math.degrees(vj))
+print("vj = " + str(math.degrees(vj)))
+#vj = math.radians(144.637)
+
 
 rj = jupiter.distFromSun(vj)
-print((rj))
+print("rj = " + str(rj))
 
 xj, yj, zj = jupiter.rectangularHelioCoords(vj, rj)
-print(str(xj) +","+ str(yj) +","+ str(zj))
+print("xj, yj, zj = " + str(xj) +","+ str(yj) +","+ str(zj))
 
-
-print("SIDREAL")
 Me = earth.meanAnomaly(dtLCL)
 Ee = earth.keplerEq(Me)
 ve = earth.trueAnomaly(Ee, Me)
 re = earth.distFromSun(ve)
+print("re = " + str((re)))
+print("ve = " + str(math.degrees(ve)))
+#ve = math.radians(356.907)
 xe, ye, ze = earth.rectangularHelioCoords(ve, re)
+print("xe, ye, ze = " + str(xe) +","+ str(ye) +","+ str(ze))
 
 
 theta = earth.sidrealTime(Me, longlitude, dtLCL) # FIX
-print(math.degrees(theta))
+print("theta = " + str(math.degrees(theta)))
 
 x, y, z = plantet2Planet(xj, yj, zj, xe, ye, ze)
+print("x, y, z = " + str(x) +","+ str(y) +","+ str(z))
 lambdaVal, beta = geoElipLongLat(x, y, z)
+print("lambda, beta =" +str(math.degrees(lambdaVal)) + ", " + str(math.degrees(beta)))
+
 alpha, delta = equatorialCoords(lambdaVal, beta, epsilon)
+print("alpha, delta =" +str(math.degrees(alpha)) + ", " + str(math.degrees(delta)))
 A, h =  hourAngle(theta, alpha, delta, latitude)
 
-print(str(A) + ',' + str(h))
+print("A, h = " + str(A) + ',' + str(h))
