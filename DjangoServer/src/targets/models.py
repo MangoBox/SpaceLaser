@@ -1,6 +1,28 @@
 from django.db import models
 
 class Target(models.Model):
+    """
+    a = semimajor axis
+    e = ecenttricity
+    i = inclination
+    w = arg perih
+    omega = ecliptic longitude
+    M = mean anomaly
+    Initial Date (datetime type)
+
+    TargetName (CharField)
+    CentreBody (CharField)
+    Type (TYPE_CHOICE - custom imported)
+
+    (optional)
+    mass
+    radius
+    solar day
+    
+    """
+
+
+
     TYPE_CHOICES = [
         ('PL',  'Planet'),
         ('NEO', 'Near-Earth Object'),

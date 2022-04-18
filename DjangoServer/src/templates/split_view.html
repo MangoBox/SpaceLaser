@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+<div class="container"> 
+    <div class="row" id="MySplitter">
+        <div class="col-md-6"> <form>
+            <ul class="list-group">
+                {% for target in objects %}
+            
+               
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{target.title}}
+                        <span>
+                        {% if target.type == "RS"%}
+                        <p class="bi-broadcast-pin" style="color: red;"> Radio Source</p>
+                        {% elif target.type == "PL"%}
+                        <p class="bi-globe2" style="color: green;"> Planet</p>
+                        {% elif target.type == "DSO"%}
+                        <p class="bi-stars" style="color: blue;"> Deep Space</p>
+                        {% elif target.type == "NEO"%}
+                        <p class="bi-question-circle-fill" style="color: black;"> Asteroid/NEO</p>
+                        {% endif %}
+                        yeet
+                        </span>
+                    </li>
+                 
+                {% endfor %}
+            </ul>
+        </form> </div>
+        <div class="col-md-6"> <form>
+            <div class="form-group">
+                <label for="exampleInputEmail1">Email address</label>
+                <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter email">
+            </div>
+            <div class="form-group">
+                <label for="exampleInputPassword1">Password</label>
+                <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+            </div>
+            <div class="form-group">
+                <label for="exampleInputFile">File input</label>
+                <input type="file" id="exampleInputFile">
+                <p class="help-block">Example block-level help text here.</p>
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox"> Check me out
+                </label>
+            </div>
+            <button type="submit" class="btn btn-default">Submit</button>
+        </form> </div>
+    </div>
+</div>
+
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+<script  src="function.js"></script>
+
+</div>
+{% endblock %}

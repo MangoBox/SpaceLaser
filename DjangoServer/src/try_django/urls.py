@@ -21,7 +21,8 @@ from django.conf import settings
 
 from targets.views import (
     get_target,
-    all_targets
+    all_targets,
+    split_view
 )
 
 from .views import (
@@ -34,6 +35,7 @@ urlpatterns = [
     path('', home_page),
     path('targets/', all_targets),
     path('targets/<int:target_id>', get_target),
+    path('split', split_view),
     path('render/', tower),
     #path('targets/', get_target),
     path('contact/', contact_page),
