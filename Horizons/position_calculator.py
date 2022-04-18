@@ -3,16 +3,23 @@ import math
 import pandas as pd
 from pathlib import Path
 
+#planets = pd.read_csv(path = )
+filepath_init = Path('/Users/jacobsolsky/Documents/GitHub/SpaceLaser/Horizons/planets.csv') 
+
+planetsdf = pd.read_csv(filepath_init)
+planetsdf = planetsdf.set_index("name")
 
 class planet:
-    def __init__(self, a, e, i, w, Omega, M_0, dtInit):
-        self.a = a
-        self.e = e
-        self.i = i       
-        self.w = w
-        self.Omega = Omega
-        self.M_0 = M_0
-        self.dtInit = dtInit
+    def __init__(self, name, planetsdf):
+        planet = planetsdf.loc[name]
+        
+        self.a = planet["a"]
+        self.e = planet["e"]
+        self.i = planet["i"]
+        self.w = planet["w"]
+        self.Omega = planet["Omega"]
+        self.M_0 = planet["M_0"]
+        self.dtInit = pd.to_datetime(planet["dtInit"])
 
         # Intitialise keplarian elements
         # All variables defined in degrees
@@ -100,7 +107,6 @@ def geoElipLongLat(x, y, z):
         lambdaVal = math.radians(math.degrees(lambdaVal) + 360)
     return lambdaVal, beta
     # Note that the output from the function is in radians
-
 def equatorialCoords(lambdaVal, beta, epsilon):
     # epsilon given in radians
     delta  = math.asin(math.sin(beta) * math.cos(epsilon) + math.cos(beta) * math.sin(epsilon) * math.sin(lambdaVal))
@@ -109,7 +115,6 @@ def equatorialCoords(lambdaVal, beta, epsilon):
     while alpha < 0:
         alpha = math.radians(math.degrees(alpha) + 360)
     return alpha, delta
-
 def hourAngle(theta, alpha, delta, latitude):
     H = theta - alpha
 
@@ -123,11 +128,9 @@ def hourAngle(theta, alpha, delta, latitude):
         A = A + 360
     return A, h
     # Output returned in degrees for embedded team
-
 def tzDiff():
     tzdiff = (datetime.datetime.now() - datetime.datetime.utcnow())
     return tzdiff
-
 def findCoords(planet, earth, dtLCL, tzdiff, latitude, longlitude):
     epsilon = math.radians(23.4397)
     Mp = planet.meanAnomaly(dtLCL, tzdiff)
@@ -164,10 +167,13 @@ def findCoords(planet, earth, dtLCL, tzdiff, latitude, longlitude):
 latitude = -34
 longlitude = 151
 
-#jupiter = planet(aj, 0.0487, i, w, Omega, M_0, dtInit) #current (2020)
-jupiter = planet(5.20260, 0.04849, 1.303, 273.867, 100.464, 20.020, datetime.datetime(2000, 1, 1, 12, 0, 0)) # FROM 2000
-earth  =  planet(1.00000, 0.01671, 0.000, 288.064, 174.873, 357.529, datetime.datetime(2000, 1, 1, 12, 0, 0)) # FROM 2000
+#jupiter = planet(5.20260, 0.04849, 1.303, 273.867, 100.464, 20.020, datetime.datetime(2000, 1, 1, 12, 0, 0)) # FROM 2000
+#earth  =  planet(1.00000, 0.01671, 0.000, 288.064, 174.873, 357.529, datetime.datetime(2000, 1, 1, 12, 0, 0)) # FROM 2000
 
+planet_name = "Saturn" #Planet to select
+
+planet_selected = planet(planet_name, planetsdf)
+earth = planet('Earth', planetsdf)
 
 tzdiff = tzDiff() # Time zone difference between LCL and UTC
 
@@ -179,7 +185,7 @@ df = pd.DataFrame({
 
 for j in range(1):
     dtLCL = datetime.datetime.now() + datetime.timedelta(hours = j) # Local time
-    A, h = findCoords(jupiter, earth, dtLCL, tzdiff, latitude, longlitude)
+    A, h = findCoords(planet_selected, earth, dtLCL, tzdiff, latitude, longlitude)
     df2 = pd.DataFrame({
         "A": [A],
         "H": [h],
@@ -188,6 +194,5 @@ for j in range(1):
     index = [j])
     print(df2)
     #df = pd.concat([df, df2])
-
-#filepath = Path('/Users/jacobsolsky/Desktop/test_data/test_data.csv')  
-#df.to_csv(filepath)
+#filepath_results = Path('/Users/jacobsolsky/Desktop/test_data/test_data.csv')  
+#df.to_csv(filepath_results)

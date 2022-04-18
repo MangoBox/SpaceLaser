@@ -1,4 +1,4 @@
-name,centre_body,a,e,i,w,omega,M_0,dtINIT
+name,centre_body,a,e,i,w,Omega,M_0,dtInit
 Mercury,Sun,0.3871,0.20563,7.005,29.125,48.331,174.795,1/1/00 12:00
 Venus,Sun,0.72333,0.00677,3.395,54.884,76.68,50.416,1/1/00 12:00
 Earth,Sun,1,0.01671,0,288.064,174.873,357.529,1/1/00 12:00
