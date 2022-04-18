@@ -14,3 +14,11 @@ def all_targets(request):
     tar = Target.objects.all()
     context = {"objects": tar, "title":"Target List"}
     return render(request, "target_list.html", context)
+
+def split_view(request):
+    tar = Target.objects.all()
+    context = {"objects": tar, "title":"Split View"}
+    return render(request, "split_view.html", context)
+
+def add_target(target):
+    Target.objects.create()
