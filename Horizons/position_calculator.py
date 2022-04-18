@@ -1,7 +1,9 @@
 import datetime
 import math
+import pandas as pd
+from pathlib import Path
 
-# Intitialise keplarian elements
+
 class planet:
     def __init__(self, a, e, i, w, Omega, M_0, dtInit):
         self.a = a
@@ -12,12 +14,11 @@ class planet:
         self.M_0 = M_0
         self.dtInit = dtInit
 
+        # Intitialise keplarian elements
         # All variables defined in degrees
     
     def meanAnomaly(self, dtLCL, tzdiff):
         n = 0.9856076686/(self.a**(3/2))
-        print("timediff = " + str(tzdiff))
-        # FIX
         
         dtLCLutc = dtLCL + tzdiff
         diff  = dtLCLutc - self.dtInit
@@ -25,8 +26,7 @@ class planet:
         
         # CONVERT DIF TO A DECIMAL POINT
         diff_float = diff.total_seconds()/(60*60*24) # In Days
-        print("diff = " +  str(diff_float))
-        M = self.M_0 + n*diff_float# CHECK THIS
+        M = self.M_0 + n*diff_float
         M = M % 360
         return math.radians(M)
 
@@ -74,19 +74,12 @@ class planet:
         Pi = math.radians(math.degrees(Pi) % 360) 
 
         time = dtLCL.time()
-        print("M = " + str(math.degrees(M)))
         time  = (time.hour*60*60 + time.minute*60 + time.second)/(60*60) # Time in hours 
-        print("time = " + str((time)))
 
         tzdiff = tzdiff.total_seconds()/(60*60)
-        print("tzdiff = " + str(tzdiff))
 
         Theta = math.degrees(M) + math.degrees(Pi) + 15 * (time + tzdiff)
-        # print("Theta: " + str(Theta % 360))
-
         Theta = math.radians(Theta % 360)
-
-        print("Theta = " + str(math.degrees(Theta)))
 
         theta = Theta - math.radians(longlitude) 
         theta = math.radians(math.degrees(theta) % 360)
@@ -119,7 +112,6 @@ def equatorialCoords(lambdaVal, beta, epsilon):
 
 def hourAngle(theta, alpha, delta, latitude):
     H = theta - alpha
-    print("H = " + str(math.degrees(H)))
 
     A = math.atan2(math.sin(H), (math.cos(H) * math.sin(math.radians(latitude)) - math.tan(delta) * math.cos(math.radians(latitude)))) 
     A = math.degrees(A) + 180
@@ -136,13 +128,36 @@ def tzDiff():
     tzdiff = (datetime.datetime.now() - datetime.datetime.utcnow())
     return tzdiff
 
+def findCoords(planet, earth, dtLCL, tzdiff, latitude, longlitude):
+    epsilon = math.radians(23.4397)
+    Mp = planet.meanAnomaly(dtLCL, tzdiff)
+
+    Ep = planet.keplerEq(Mp)
+    vp = planet.trueAnomaly(Ep, Mp)
+
+    rp = planet.distFromSun(vp)
+    xp, yp, zp = planet.rectangularHelioCoords(vp, rp, tzdiff)
+
+    Me = earth.meanAnomaly(dtLCL, tzdiff)
+    Ee = earth.keplerEq(Me)
+    ve = earth.trueAnomaly(Ee, Me)
+    re = earth.distFromSun(ve)
+    xe, ye, ze = earth.rectangularHelioCoords(ve, re, tzdiff)
+
+    x, y, z = plantet2Planet(xp, yp, zp, xe, ye, ze)
+
+    theta = earth.sidrealTime(Me, longlitude, dtLCL, tzdiff) 
+    lambdaVal, beta = geoElipLongLat(x, y, z)
+    alpha, delta = equatorialCoords(lambdaVal, beta, epsilon)
+
+    A, h =  hourAngle(theta, alpha, delta, latitude)
+    #print("A, h = " + str(A) + ',' + str(h))
+    return A, h
+
 ### MAIN SCRIPT
 
 #datetimeInitial = datetime.datetime(2000, 1, 1, 0, 0, 0)
 #datetimeObervation = datetime.datetime(2004, 1, 1, 0, 0, 0)
-tzdiff = tzDiff() # Time zone difference between LCL and UTC
-
-dtLCL = datetime.datetime.now() + datetime.timedelta(hours = 16) # Local time
 #dtLCL = datetime.datetime(2004, 1, 1, 1, 0, 0)
 
 # Intialise location
@@ -152,45 +167,27 @@ longlitude = 151
 #jupiter = planet(aj, 0.0487, i, w, Omega, M_0, dtInit) #current (2020)
 jupiter = planet(5.20260, 0.04849, 1.303, 273.867, 100.464, 20.020, datetime.datetime(2000, 1, 1, 12, 0, 0)) # FROM 2000
 earth  =  planet(1.00000, 0.01671, 0.000, 288.064, 174.873, 357.529, datetime.datetime(2000, 1, 1, 12, 0, 0)) # FROM 2000
-epsilon = math.radians(23.4397)
-
-Mj = jupiter.meanAnomaly(dtLCL, tzdiff)
-print("Mj = " + str(math.degrees(Mj)))
-
-Ej = jupiter.keplerEq(Mj)
-print("Ej = " + str(math.degrees(Ej)))
-vj = jupiter.trueAnomaly(Ej, Mj)
-print("vj = " + str(math.degrees(vj)))
-#vj = math.radians(144.637)
 
 
-rj = jupiter.distFromSun(vj)
-print("rj = " + str(rj))
+tzdiff = tzDiff() # Time zone difference between LCL and UTC
 
-xj, yj, zj = jupiter.rectangularHelioCoords(vj, rj, tzdiff)
-print("xj, yj, zj = " + str(xj) +","+ str(yj) +","+ str(zj))
+df = pd.DataFrame({
+        "A": [],
+        "H": [],
+        "time": []
+    })
 
-Me = earth.meanAnomaly(dtLCL, tzdiff)
-Ee = earth.keplerEq(Me)
-ve = earth.trueAnomaly(Ee, Me)
-re = earth.distFromSun(ve)
-print("re = " + str((re)))
-print("ve = " + str(math.degrees(ve)))
-xe, ye, ze = earth.rectangularHelioCoords(ve, re, tzdiff)
-print("xe, ye, ze = " + str(xe) +","+ str(ye) +","+ str(ze))
+for j in range(1):
+    dtLCL = datetime.datetime.now() + datetime.timedelta(hours = j) # Local time
+    A, h = findCoords(jupiter, earth, dtLCL, tzdiff, latitude, longlitude)
+    df2 = pd.DataFrame({
+        "A": [A],
+        "H": [h],
+        "time": [dtLCL]
+    },
+    index = [j])
+    print(df2)
+    #df = pd.concat([df, df2])
 
-
-theta = earth.sidrealTime(Me, longlitude, dtLCL, tzdiff) 
-print("theta = " + str(math.degrees(theta)))
-
-x, y, z = plantet2Planet(xj, yj, zj, xe, ye, ze)
-print("x, y, z = " + str(x) +","+ str(y) +","+ str(z))
-print("dist = " + str(math.sqrt(x**2 + y**2 + z**2)))
-lambdaVal, beta = geoElipLongLat(x, y, z)
-print("lambda, beta =" +str(math.degrees(lambdaVal)) + ", " + str(math.degrees(beta)))
-
-alpha, delta = equatorialCoords(lambdaVal, beta, epsilon)
-print("alpha, delta =" +str(math.degrees(alpha)) + ", " + str(math.degrees(delta)))
-
-A, h =  hourAngle(theta, alpha, delta, latitude)
-print("A, h = " + str(A) + ',' + str(h))
+#filepath = Path('/Users/jacobsolsky/Desktop/test_data/test_data.csv')  
+#df.to_csv(filepath)
