@@ -11,19 +11,31 @@
                 {% for target in objects %}
             
                
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        {{target.title}}
+                    <li class="list-group-item d-flex justify-content-between align-items-center" style = "padding: 1.5rem; margin-top:1rem;">
+                        <div>
+                            <h3>{{target.title}}</h3>
+                            {% if target.type == "RS"%}
+                            <p class="bi-broadcast-pin" style="color: red;"> Radio Source</p>
+                            {% elif target.type == "PL"%}
+                            <p class="bi-globe2" style="color: green;"> Planet</p>
+                            {% elif target.type == "DSO"%}
+                            <p class="bi-stars" style="color: blue;"> Deep Space</p>
+                            {% elif target.type == "NEO"%}
+                            <p class="bi-question-circle-fill" style="color: black;"> Asteroid/NEO</p>
+                            {% endif %}
+                            <a href="#" class="btn btn-primary"><nobr class="bi-send"> Slew</nobr></a>
+                            <p></p>
+                            <h5><nobr class="bi-eye"> XX.XXpm - XX.XXam</nobr></h5>
+                        </div>
                         <span>
-                        {% if target.type == "RS"%}
-                        <p class="bi-broadcast-pin" style="color: red;"> Radio Source</p>
-                        {% elif target.type == "PL"%}
-                        <p class="bi-globe2" style="color: green;"> Planet</p>
-                        {% elif target.type == "DSO"%}
-                        <p class="bi-stars" style="color: blue;"> Deep Space</p>
-                        {% elif target.type == "NEO"%}
-                        <p class="bi-question-circle-fill" style="color: black;"> Asteroid/NEO</p>
-                        {% endif %}
-                        yeet
+                        <h6>Orbital Data</h6>
+                        Semi-Major Axis: {{target.semimajor_axis}}<br>
+                        Eccentricity: {{target.eccentricity}}<br>
+                        Inclination: {{target.inclination}}<br>
+                        Ecliptic Longitude: {{target.longitude}}<br>
+                        <br>
+                        <a href="#" class="btn btn-outline-primary" style="bg-color: red;"><nobr class="bi-caret-right-fill"> Observation Planner</nobr></a>
+
                         </span>
                     </li>
                  
