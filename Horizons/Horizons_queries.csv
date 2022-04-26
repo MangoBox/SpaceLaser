@@ -1,3 +1,2 @@
-﻿Name,Central Body,Ephemeris_type
-1,1,1
-1,1,1
+﻿name,COMMAND,Type,OBJ_DATA,STEP_SIZE
+Jupiter,5,Planet,NO',1d'
