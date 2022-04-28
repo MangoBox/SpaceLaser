@@ -3,12 +3,6 @@ import math
 import pandas as pd
 from pathlib import Path
 
-#planets = pd.read_csv(path = )
-filepath_init = Path('/Users/jacobsolsky/Documents/GitHub/SpaceLaser/Horizons/planets.csv') 
-
-planetsdf = pd.read_csv(filepath_init)
-planetsdf = planetsdf.set_index("name")
-
 class planet:
     def __init__(self, name, planetsdf):
         planet = planetsdf.loc[name]
@@ -158,17 +152,15 @@ def findCoords(planet, earth, dtLCL, tzdiff, latitude, longlitude):
     return A, h
 
 ### MAIN SCRIPT
-
-#datetimeInitial = datetime.datetime(2000, 1, 1, 0, 0, 0)
-#datetimeObervation = datetime.datetime(2004, 1, 1, 0, 0, 0)
-#dtLCL = datetime.datetime(2004, 1, 1, 1, 0, 0)
-
-# Intialise location
 latitude = -34
 longlitude = 151
+# Intialise location
 
-#jupiter = planet(5.20260, 0.04849, 1.303, 273.867, 100.464, 20.020, datetime.datetime(2000, 1, 1, 12, 0, 0)) # FROM 2000
-#earth  =  planet(1.00000, 0.01671, 0.000, 288.064, 174.873, 357.529, datetime.datetime(2000, 1, 1, 12, 0, 0)) # FROM 2000
+filepath_init = Path('/Users/jacobsolsky/Documents/GitHub/SpaceLaser/Horizons/planets.csv') 
+filepath_results = Path('/Users/jacobsolsky/Desktop/test_data/test_data.csv')  
+
+planetsdf = pd.read_csv(filepath_init)
+planetsdf = planetsdf.set_index("name")
 
 planet_name = "Saturn" #Planet to select
 
@@ -183,16 +175,43 @@ df = pd.DataFrame({
         "time": []
     })
 
-for j in range(1):
-    dtLCL = datetime.datetime.now() + datetime.timedelta(hours = j) # Local time
+for j in range(50):
+    dtLCL = datetime.datetime.now() + j * datetime.timedelta(minutes = 5) # Local time
     A, h = findCoords(planet_selected, earth, dtLCL, tzdiff, latitude, longlitude)
     df2 = pd.DataFrame({
         "A": [A],
         "H": [h],
-        "time": [dtLCL]
+        "time": [dtLCL.time()]
     },
     index = [j])
-    print(df2)
-    #df = pd.concat([df, df2])
-#filepath_results = Path('/Users/jacobsolsky/Desktop/test_data/test_data.csv')  
-#df.to_csv(filepath_results)
+
+    last_index = j 
+    df = pd.concat([df, df2])
+df.to_csv(filepath_results)
+
+print(df)
+
+send_next = datetime.datetime.now() + datetime.timedelta(minutes = 5)
+
+# Make script LIVE
+x = True
+while x == True:
+    if send_next < datetime.datetime.now():
+        dtLCL = datetime.datetime.now() + last_index * datetime.timedelta(minutes = 5)
+        A, h = findCoords(planet_selected, earth, dtLCL, tzdiff, latitude, longlitude)
+        df2 = pd.DataFrame({
+            "A": [A],
+            "H": [h],
+            "time": [dtLCL.time()]
+        },
+        index = [last_index + 1])
+        df = pd.concat([df, df2])
+        last_index = last_index + 1
+        print(df2)
+        send_next = datetime.datetime.now() + datetime.timedelta(minutes = 5)
+
+        df2.to_csv(filepath_results, mode='a', index=True, header=False)
+        x = False
+
+
+
