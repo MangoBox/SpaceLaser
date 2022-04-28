@@ -2,6 +2,7 @@ import datetime
 import math
 import pandas as pd
 from pathlib import Path
+import serial
 
 class planet:
     def __init__(self, name, planetsdf):
@@ -156,8 +157,8 @@ latitude = -34
 longlitude = 151
 # Intialise location
 
-filepath_init = Path('/Users/jacobsolsky/Documents/GitHub/SpaceLaser/Horizons/planets.csv') 
-filepath_results = Path('/Users/jacobsolsky/Desktop/test_data/test_data.csv')  
+filepath_init = Path('/Users/jacobsolsky/Documents/GitHub/SpaceLaser/Horizons/planets.csv') # HUGH
+#filepath_results = Path('output_data.csv')  
 
 planetsdf = pd.read_csv(filepath_init)
 planetsdf = planetsdf.set_index("name")
@@ -175,25 +176,36 @@ df = pd.DataFrame({
         "time": []
     })
 
+
 for j in range(50):
     dtLCL = datetime.datetime.now() + j * datetime.timedelta(minutes = 5) # Local time
     A, h = findCoords(planet_selected, earth, dtLCL, tzdiff, latitude, longlitude)
     df2 = pd.DataFrame({
         "A": [A],
         "H": [h],
-        "time": [dtLCL.time()]
+        "time": [dtLCL]
     },
     index = [j])
 
     last_index = j 
     df = pd.concat([df, df2])
-df.to_csv(filepath_results)
-
+#df.to_csv(filepath_results)
 print(df)
 
+
+#eensy = serial.Serial('com1', 115200) # HUGH
+
+data_init = str(df.loc[0][2]) + "," + "5\r" # Start datetime, Incremenet in minutes
+#teensy.write(data_init.encode())
+
+data = str(df.loc[0][0]) + "," + str(df.loc[0][1]) + "\r" # A, h
+#teensy.write(data.encode()) 
+
+
+"""
+Make script LIVE
 send_next = datetime.datetime.now() + datetime.timedelta(minutes = 5)
 
-# Make script LIVE
 x = True
 while x == True:
     if send_next < datetime.datetime.now():
@@ -212,6 +224,6 @@ while x == True:
 
         df2.to_csv(filepath_results, mode='a', index=True, header=False)
         x = False
-
+"""
 
 
