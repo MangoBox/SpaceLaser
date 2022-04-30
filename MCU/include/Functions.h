@@ -1,6 +1,3 @@
-#include<Arduino.h>
-#include<stdio.h>
-#include<string.h>
 
 /*****************************************************************
 FUNCTIONS
@@ -21,22 +18,26 @@ void Deg_to_Step (horizon_co DCoor[], horizon_co SCoor[]){
     float Step = 0.2;
     for (int i = 0; i < NUM_DATAPT; i++){
         SCoor[i].alt = DCoor[i].alt / Step;
-        SCoor[i].az = DCoor[i].az / Step;   
+        SCoor[i].az = DCoor[i].az / Step;
     }
 };
 
 // String token 
-void String_strtok (void){
-   // Place holder for the data we will recieve
-   char input_string[400] = "123123,123123123,123712837128937";
+void String_strtok (char input_string[], horizon_co extracted_data){
 
    // Extract the first token
    char * token = strtok(input_string, ",");
+   extracted_data.az = std :: atof (token);
+   Serial.println (token);
+   Serial.println (extracted_data.az);
+   
    // loop through the string to extract all other tokens
+   /*
    while( token != NULL ) {
-      printf( " %s", token ); //printing each token
+      Serial.println (token); //printing each token
       token = strtok(NULL, ",");
    }
+   */
    return;
 }
 
