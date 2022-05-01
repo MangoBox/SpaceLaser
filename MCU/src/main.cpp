@@ -4,20 +4,16 @@
 #include<string.h>
 #include <iostream>
 #include <cstdlib>
-
 //Our header files
 #include <Variables.h>
 #include <Functions.h>
 
-
-/*****************************************************************
-MAIN
-*****************************************************************/
 void setup(){
-    // Time to wait for serial data
+    // Local variables
     int wait_period = 306000;
     int baud_rate = 9600;
 
+    //Starting serial
     Serial.begin(baud_rate);
     Serial.setTimeout (wait_period);
 }
@@ -35,9 +31,9 @@ void loop(){
     Serial.setTimeout(0.01);
     */
 
+    //Extracting Data from raw data
     Serial.println (Raw_Data);
-    delay (1000);
-    String_strtok (Raw_Data, recieved_co[1]);
-    delay (3000);
+    String_strtok (Raw_Data, recieved_co[1], Strtok_outputs);
+    delay (5000);
 
 }

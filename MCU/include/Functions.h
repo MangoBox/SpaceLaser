@@ -23,22 +23,60 @@ void Deg_to_Step (horizon_co DCoor[], horizon_co SCoor[]){
 };
 
 // String token 
-void String_strtok (char input_string[], horizon_co extracted_data){
+void String_strtok (char input_string[], horizon_co extracted_data, bool print_outputs){
 
-   // Extract the first token
-   char * token = strtok(input_string, ",");
-   extracted_data.az = std :: atof (token);
-   Serial.println (token);
-   Serial.println (extracted_data.az);
-   
-   // loop through the string to extract all other tokens
-   /*
-   while( token != NULL ) {
-      Serial.println (token); //printing each token
-      token = strtok(NULL, ",");
-   }
-   */
-   return;
+    //Variables
+    char * token;
+
+    // Extract Azimuth
+    token = strtok(input_string, ",");
+    extracted_data.az = std :: atof (token);
+    
+    if (print_outputs = true){
+        Serial.print ("az token = ");
+        Serial.println (token);
+        Serial.print ("az output = ");
+        Serial.println (extracted_data.az, 6);
+        Serial.println (); 
+    }
+
+    //Extracting Altitude
+    token = strtok(NULL, ",");
+    extracted_data.alt = std :: atof (token);
+
+    if (print_outputs = true){
+        Serial.print ("alt token = ");
+        Serial.println (token);
+        Serial.print ("alt output = ");
+        Serial.println (extracted_data.alt, 6);
+        Serial.println (); 
+    }
+
+    //Extracting Date
+    token = strtok(NULL, ",");
+    extracted_data.date = token;
+
+    if (print_outputs = true){
+        Serial.print ("Date token = ");
+        Serial.println (token);
+        Serial.print ("Date output = ");
+        Serial.println (extracted_data.date);
+        Serial.println (); 
+    }
+
+    //Extracting Time
+    token = strtok(NULL, ",");
+    extracted_data.time = token;
+
+    if (print_outputs = true){
+        Serial.print ("time token = ");
+        Serial.println (token);
+        Serial.print ("time output = ");
+        Serial.println (extracted_data.time);
+        Serial.println (); 
+    }
+
+    return;
 }
 
 //format check for recieved data

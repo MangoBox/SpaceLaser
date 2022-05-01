@@ -6,9 +6,13 @@ int NUM_DATAPT = 80;
 // Time interval between data points
 int T_interval; 
 
+//Print Strtok outputs??
+bool Strtok_outputs = true;
+
 //Main data type
 struct horizon_co {
-double az;
-double alt;
-// MAYBE TIME
+    double az;
+    double alt;
+    String date;
+    String time;
 };
