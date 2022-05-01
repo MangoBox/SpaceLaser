@@ -22,17 +22,18 @@ void Deg_to_Step (horizon_co DCoor[], horizon_co SCoor[]){
     }
 };
 
-// String token 
-void String_strtok (char input_string[], horizon_co extracted_data, bool print_outputs){
+// String extraction function
+horizon_co String_strtok (char input_string[], bool print_outputs){
 
     //Variables
+    horizon_co extracted_data;
     char * token;
 
     // Extract Azimuth
     token = strtok(input_string, ",");
     extracted_data.az = std :: atof (token);
     
-    if (print_outputs = true){
+    if (print_outputs){
         Serial.print ("az token = ");
         Serial.println (token);
         Serial.print ("az output = ");
@@ -44,7 +45,7 @@ void String_strtok (char input_string[], horizon_co extracted_data, bool print_o
     token = strtok(NULL, ",");
     extracted_data.alt = std :: atof (token);
 
-    if (print_outputs = true){
+    if (print_outputs){
         Serial.print ("alt token = ");
         Serial.println (token);
         Serial.print ("alt output = ");
@@ -56,7 +57,7 @@ void String_strtok (char input_string[], horizon_co extracted_data, bool print_o
     token = strtok(NULL, ",");
     extracted_data.date = token;
 
-    if (print_outputs = true){
+    if (print_outputs){
         Serial.print ("Date token = ");
         Serial.println (token);
         Serial.print ("Date output = ");
@@ -68,7 +69,7 @@ void String_strtok (char input_string[], horizon_co extracted_data, bool print_o
     token = strtok(NULL, ",");
     extracted_data.time = token;
 
-    if (print_outputs = true){
+    if (print_outputs){
         Serial.print ("time token = ");
         Serial.println (token);
         Serial.print ("time output = ");
@@ -76,7 +77,7 @@ void String_strtok (char input_string[], horizon_co extracted_data, bool print_o
         Serial.println (); 
     }
 
-    return;
+    return extracted_data;
 }
 
 //format check for recieved data

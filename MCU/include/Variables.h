@@ -1,13 +1,13 @@
 /*****************************************************************
 GLOBAL VARIABLES:
 *****************************************************************/
-//Number of data point we are reciving
-int NUM_DATAPT = 80;
-// Time interval between data points
-int T_interval; 
+//Number of data points we are reciving
+int NUM_DATAPT = 20;
+// Time interval between data points in ms
+int T_interval = 6000;  //5 minutes
 
-//Print Strtok outputs??
-bool Strtok_outputs = true;
+//Print String_Strtok function outputs??
+bool Strtok_outputs = false;
 
 //Main data type
 struct horizon_co {
