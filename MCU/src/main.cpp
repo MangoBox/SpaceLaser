@@ -19,19 +19,41 @@ void setup(){
 }
 
 void loop(){
-    /*Local variables*/
-    char Raw_Data_1[55] = "133.193231,-27.095697,2022-04-29,22:07:06";
-    char Raw_Data_2[55] = "180.123433,-95.900123,2022-04-29,22:07:11";
-    
-    struct horizon_co recieved_co [NUM_DATAPT];
+    //Local variables
     struct horizon_co current_co, delta_co ;
     
-    //Recieving data from computer program
-    /*
-    while(Serial.available() == 0);
-    Raw_Data = Serial.readStringUntil('\r');
-    Serial.setTimeout(0.01);
-    */
+    /****************************************************
+     * Recieving Data from computer
+    ****************************************************/
+    // START WITH A WHILE AND THEN MOVE TO IF MAYBE
+    while(Serial.available() == 0){
+    }
+    
+    // Recieving number of data sets being sent and time interval (ms)
+    NUM_DATAPT = Serial.readStringUntil (',').toInt();
+    T_interval = Serial.readStringUntil ('\r').toInt();
+
+    //ERROR CHECK USING REGEX. First save as string and pattern match.
+
+
+    //Delcaring main data storage variable
+    struct horizon_co recieved_co [NUM_DATAPT];
+
+    // Extracting data
+    String Raw_Data_S;
+    char Raw_Data [55];
+    for (int i = 0; i < NUM_DATAPT; i ++){
+        Raw_Data_S = Serial.readStringUntil('\r');
+        // Do a REGEX check here
+        Raw_Data_S.toCharArray(Raw_Data, 55);
+        recieved_co[i] = String_strtok (Raw_Data, Strtok_outputs);
+    }
+
+    /****************************************************
+     * TESTING WITH HARD CODED DATA
+    ****************************************************/
+    char Raw_Data_1[55] = "133.193231,-27.095697,2022-04-29,22:07:06";
+    char Raw_Data_2[55] = "180.123433,-95.900123,2022-04-29,22:07:11";
 
     //Extracting Data Strings from raw data
     Serial.print ("Raw data string 1 = ");

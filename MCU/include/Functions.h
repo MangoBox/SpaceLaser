@@ -15,7 +15,7 @@ horizon_co calulate_delta(horizon_co current_co, horizon_co future_co){
 
 //Degrees to motor steps
 void Deg_to_Step (horizon_co DCoor[], horizon_co SCoor[]){
-    float Step = 0.2;
+    const float Step = 0.2;
     for (int i = 0; i < NUM_DATAPT; i++){
         SCoor[i].alt = DCoor[i].alt / Step;
         SCoor[i].az = DCoor[i].az / Step;
@@ -80,11 +80,10 @@ horizon_co String_strtok (char input_string[], bool print_outputs){
     return extracted_data;
 }
 
-//format check for recieved data
+//Format check for recieved data
 int format_check (){
 
 }
-
 
 
 
