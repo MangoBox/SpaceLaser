@@ -2,6 +2,7 @@ import datetime
 import math
 import pandas as pd
 from pathlib import Path
+import serial
 
 class planet:
     def __init__(self, name, planetsdf):
@@ -146,28 +147,47 @@ def findCoords(planet, earth, dtLCL, tzdiff, latitude, longlitude):
     theta = earth.sidrealTime(Me, longlitude, dtLCL, tzdiff) 
     lambdaVal, beta = geoElipLongLat(x, y, z)
     alpha, delta = equatorialCoords(lambdaVal, beta, epsilon)
+    print(alpha)
+    print(delta)
 
     A, h =  hourAngle(theta, alpha, delta, latitude)
     #print("A, h = " + str(A) + ',' + str(h))
     return A, h
+
+def findCoords_short(RA, DEC, obs_time, tzdiff, earth, latitude):
+    Me = earth.meanAnomaly(obs_time, tzdiff)
+    theta = earth.sidrealTime(Me, longlitude, obs_time, tzdiff) 
+    alpha = RA
+    print(alpha)
+    delta = DEC
+    print(delta)
+    A, h =  hourAngle(theta, alpha, delta, latitude)
+    return A, h
+    # Finds A and h from Right Ascenion and Declination
+
 
 ### MAIN SCRIPT
 latitude = -34
 longlitude = 151
 # Intialise location
 
-filepath_init = Path('/Users/jacobsolsky/Documents/GitHub/SpaceLaser/Horizons/planets.csv') 
-filepath_results = Path('/Users/jacobsolsky/Desktop/test_data/test_data.csv')  
+
+filepath_init = Path('/Users/jacobsolsky/Documents/GitHub/SpaceLaser/Horizons/planets.csv') # HUGH
+#filepath_results = Path('output_data.csv')  
 
 planetsdf = pd.read_csv(filepath_init)
 planetsdf = planetsdf.set_index("name")
 
-planet_name = "Saturn" #Planet to select
-
+planet_name = "Mars" # Planet to select from csv file
 planet_selected = planet(planet_name, planetsdf)
 earth = planet('Earth', planetsdf)
-
 tzdiff = tzDiff() # Time zone difference between LCL and UTC
+
+RA = math.radians(22*15 + 58*15/(60) + 4.38*15/(60*60)) #math.radians(22*15 + 58*15/(24*60) + 4.38*15/(24*60*60))
+DEC = math.radians(-8 + 16/(60)+ 5.6/(60*60))
+
+print(findCoords_short(RA, DEC, pd.to_datetime("2022-May-02 03:39:46.190"), tzdiff, earth, latitude))
+print(findCoords(planet_selected, earth, pd.to_datetime("2022-May-02 03:39:46.190"), tzdiff, latitude, longlitude))
 
 df = pd.DataFrame({
         "A": [],
@@ -175,25 +195,34 @@ df = pd.DataFrame({
         "time": []
     })
 
-for j in range(50):
+'''for j in range(50):
     dtLCL = datetime.datetime.now() + j * datetime.timedelta(minutes = 5) # Local time
     A, h = findCoords(planet_selected, earth, dtLCL, tzdiff, latitude, longlitude)
     df2 = pd.DataFrame({
         "A": [A],
         "H": [h],
-        "time": [dtLCL.time()]
+        "time": [dtLCL]
     },
     index = [j])
 
     last_index = j 
     df = pd.concat([df, df2])
-df.to_csv(filepath_results)
+#df.to_csv(filepath_results)'''
+#print(df)
 
-print(df)
+#teensy = serial.Serial('com1', 115200) # HUGH
 
+#data_init = str(df.loc[0][2]) + "," + "5\r" # Start datetime, Incremenet in minutes
+#teensy.write(data_init.encode())
+
+#data = str(df.loc[0][0]) + "," + str(df.loc[0][1]) + "\r" # A, h
+#teensy.write(data.encode()) 
+
+
+"""
+Make script LIVE
 send_next = datetime.datetime.now() + datetime.timedelta(minutes = 5)
 
-# Make script LIVE
 x = True
 while x == True:
     if send_next < datetime.datetime.now():
@@ -212,6 +241,6 @@ while x == True:
 
         df2.to_csv(filepath_results, mode='a', index=True, header=False)
         x = False
-
+"""
 
 

@@ -1,2 +1,10 @@
-﻿name,COMMAND,Type,OBJ_DATA,STEP_SIZE
-Jupiter,5,Planet,NO',1d'
+﻿name,COMMAND
+Mercury, 199
+Venus, 299
+Earth, 399
+Mars, 499
+Jupiter, 599
+Saturn, 699
+Netpune, 799
+Uranus, 899
+Pluto, 999

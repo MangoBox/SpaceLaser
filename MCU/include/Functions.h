@@ -1,6 +1,3 @@
-#include<Arduino.h>
-#include<stdio.h>
-#include<string.h>
 
 /*****************************************************************
 FUNCTIONS
@@ -18,33 +15,75 @@ horizon_co calulate_delta(horizon_co current_co, horizon_co future_co){
 
 //Degrees to motor steps
 void Deg_to_Step (horizon_co DCoor[], horizon_co SCoor[]){
-    float Step = 0.2;
+    const float Step = 0.2;
     for (int i = 0; i < NUM_DATAPT; i++){
         SCoor[i].alt = DCoor[i].alt / Step;
-        SCoor[i].az = DCoor[i].az / Step;   
+        SCoor[i].az = DCoor[i].az / Step;
     }
 };
 
-// String token 
-void String_strtok (void){
-   // Place holder for the data we will recieve
-   char input_string[400] = "123123,123123123,123712837128937";
+// String extraction function
+horizon_co String_strtok (char input_string[], bool print_outputs){
 
-   // Extract the first token
-   char * token = strtok(input_string, ",");
-   // loop through the string to extract all other tokens
-   while( token != NULL ) {
-      printf( " %s", token ); //printing each token
-      token = strtok(NULL, ",");
-   }
-   return;
+    //Variables
+    horizon_co extracted_data;
+    char * token;
+
+    // Extract Azimuth
+    token = strtok(input_string, ",");
+    extracted_data.az = std :: atof (token);
+    
+    if (print_outputs){
+        Serial.print ("az token = ");
+        Serial.println (token);
+        Serial.print ("az output = ");
+        Serial.println (extracted_data.az, 6);
+        Serial.println (); 
+    }
+
+    //Extracting Altitude
+    token = strtok(NULL, ",");
+    extracted_data.alt = std :: atof (token);
+
+    if (print_outputs){
+        Serial.print ("alt token = ");
+        Serial.println (token);
+        Serial.print ("alt output = ");
+        Serial.println (extracted_data.alt, 6);
+        Serial.println (); 
+    }
+
+    //Extracting Date
+    token = strtok(NULL, ",");
+    extracted_data.date = token;
+
+    if (print_outputs){
+        Serial.print ("Date token = ");
+        Serial.println (token);
+        Serial.print ("Date output = ");
+        Serial.println (extracted_data.date);
+        Serial.println (); 
+    }
+
+    //Extracting Time
+    token = strtok(NULL, ",");
+    extracted_data.time = token;
+
+    if (print_outputs){
+        Serial.print ("time token = ");
+        Serial.println (token);
+        Serial.print ("time output = ");
+        Serial.println (extracted_data.time);
+        Serial.println (); 
+    }
+
+    return extracted_data;
 }
 
-//format check for recieved data
+//Format check for recieved data
 int format_check (){
 
 }
-
 
 
 
