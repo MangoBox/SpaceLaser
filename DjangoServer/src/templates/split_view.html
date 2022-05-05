@@ -91,7 +91,7 @@
 			import { GLTFLoader } from 'https://unpkg.com/three/examples/jsm/loaders/GLTFLoader.js';
 			import { RGBELoader } from 'https://unpkg.com/three/examples/jsm/loaders/RGBELoader.js';
 
-			let camera, scene, renderer, light, hemiLight, modelObj;
+			let camera, scene, renderer, light, hemiLight, modelObj, clock;
 
 			init();
 			animate();
@@ -107,6 +107,7 @@
 				camera.position.set( - 1.8, 0.6, 2.7 );
 
 				scene = new THREE.Scene();
+				clock = new THREE.Clock();
 
 				new RGBELoader()
 					.setPath( '../static/' )
@@ -119,6 +120,7 @@
 						scene.background = new THREE.Color(0x808080);
 
 						animate();
+						
 
 						// model
 
@@ -185,6 +187,7 @@
 			//
 			let r = 100;
 			function animate() {
+				
 				renderer.render(scene,camera);
 				//modelObj.scale.set(r--, 1, 1);
 				requestAnimationFrame(animate);

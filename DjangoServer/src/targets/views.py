@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from itertools import chain
 from .forms import SearchForm
+import operator
 
 # Create your views here.
 from .models import DeepSpaceTarget, SolarTarget
@@ -19,14 +20,16 @@ def all_targets(request):
 
 def split_view(request):
     deep_space_targets = DeepSpaceTarget.objects.all()[:100]
-
+    solar_targets = SolarTarget.objects.all()
     if request.method == 'GET':
         form = SearchForm(request.GET)
-        print(request.GET.get('item', False))
-        deep_space_targets = DeepSpaceTarget.objects.filter(title__contains=request.GET.get('item', False))
-    solar_targets = SolarTarget.objects.all()
+        item = request.GET.get('item', False)
+        if item != False and item != "":
+            deep_space_targets = DeepSpaceTarget.objects.filter(title__contains=request.GET.get('item', False))[:100]
+            solar_targets = SolarTarget.objects.filter(title__contains=request.GET.get('item', False))[:100]
     result_list = list(chain(solar_targets, deep_space_targets))
-    context = {"objects": deep_space_targets, "title":"Split View"}
+    result_list = sorted(result_list, key=operator.attrgetter('title'))
+    context = {"objects": result_list, "title":"Split View"}
     return render(request, "split_view.html", context)
 
 def add_target(target):
