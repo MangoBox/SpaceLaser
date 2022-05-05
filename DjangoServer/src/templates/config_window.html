@@ -1,0 +1,36 @@
+<div class="modal fade" id="configWindow" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Connection Settings</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+        Configure connection settings to the Teensy 3.6 below.
+        Saving any settings in this window will cause the telescope to disconnect.
+        
+        <div class="dropdown">
+            COM Port
+            <select class="form-select" aria-label="Default select example">
+                <option selected>COM1</option>
+                <option value="2">COM2</option>
+                <option value="3">COM3</option>
+              </select>              
+        </div>  
+
+        <div class="dropdown">
+            Baud Rate
+            <select class="form-select" aria-label="Default select example">
+                <option selected>9600</option>
+                <option value="2">115200</option>
+              </select>              
+        </div>  
+        </div>
+        <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+    </div>
+    </div>
+</div> 
+

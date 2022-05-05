@@ -1,0 +1,29 @@
+<div class="modal fade" id="observationPlanner" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Observation Planner</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            Configure future objects the telescope will observe here.
+            <br>
+            <ol class="list-group list-group-numbered">
+                {% for target in objects %}
+                <li class="list-group-item d-flex justify-content-between align-items-start">
+                  <div class="ms-2 me-auto">
+                    <div class="fw-bold">{{target.title}}</div>
+                  </div>
+                  <span class="badge bg-warning rounded-pill">Waiting</span>
+                </li>
+                {% endfor %}
+              </ol>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Start</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 
+
