@@ -15,10 +15,7 @@ queries = pd.read_csv(queries_filepath)
 planets_filepath = Path('/Users/jacobsolsky/Documents/GitHub/SpaceLaser/Horizons/planets.csv')
 
 url = 'https://ssd.jpl.nasa.gov/api/horizons_file.api'
-spk_filename = 'spk_file.bsp'
 file = 'documents/GitHib/SpaceLaser/input.txt'
-
-example = "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='499'&OBJ_DATA='YES'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='2006-01-01'&STOP_TIME='2006-01-20'&STEP_SIZE='1%20d'&QUANTITIES='1,9,20,23,24,29'"
 
 request_base = "https://ssd.jpl.nasa.gov/api/horizons.api?format=text"
 
@@ -26,10 +23,8 @@ pattern = "\$\$SOE([\s\S]+)\$\$EOE"
 
 planet_df = pd.DataFrame(columns=["name", "centre_body", "a", "e", "i", "w", "Omega", "M_0", "dtInit"])
 
-
 # Pulling latest planet data 
-
-'''for i in range(len(queries.index)):
+for i in range(len(queries.index)):
     query_df = queries.iloc[i]
 
     query_link = request_base
@@ -60,11 +55,11 @@ planet_df = pd.DataFrame(columns=["name", "centre_body", "a", "e", "i", "w", "Om
                         elements_ephem_df.iloc[5][0], \
                         elements_ephem_df.iloc[9][0], \
                         pd.to_datetime(elements_ephem_df.iloc[1][0].removeprefix(" A.D. "))]
-'''
+
+planet_df.to_csv(planets_filepath, mode='a', index=False, header=False)
 
 
-
-# For other bodies (to be called for live script)
+"""# For other bodies (to be called for live script)
 name = "599"
 
 query_link = request_base
@@ -119,6 +114,6 @@ for match in results:
     df = pd.concat([df, df2])
     i = i + 1
 
-print(df)
+print(df)"""
 
-# planet_df.to_csv(planets_filepath, mode='a', index=False, header=False)
+
