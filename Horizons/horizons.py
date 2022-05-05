@@ -68,7 +68,6 @@ planet_df = pd.DataFrame(columns=["name", "centre_body", "a", "e", "i", "w", "Om
 name = "599"
 
 query_link = request_base
-#query_link += "!$$SOF"
 query_link += "&MAKE_EPHEM=YES"
 query_link += "&COMMAND='" + name + "'"
 query_link += "&EPHEM_TYPE=OBSERVER"

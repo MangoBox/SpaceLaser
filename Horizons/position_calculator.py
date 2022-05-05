@@ -210,10 +210,10 @@ df = pd.DataFrame({
 #df.to_csv(filepath_results)'''
 #print(df)
 
-#teensy = serial.Serial('com1', 115200) # HUGH
-
-#data_init = str(df.loc[0][2]) + "," + "5\r" # Start datetime, Incremenet in minutes
-#teensy.write(data_init.encode())
+# COMMUNICATION
+teensy = serial.Serial('com1', 115200) # HUGH
+data_init = str(df.loc[0][2]) + "," + str(5*60*1000) +"\r" # Start datetime, Incremenet in minutes
+teensy.write(data_init.encode())
 
 #data = str(df.loc[0][0]) + "," + str(df.loc[0][1]) + "\r" # A, h
 #teensy.write(data.encode()) 
