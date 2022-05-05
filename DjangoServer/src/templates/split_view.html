@@ -1,16 +1,19 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
+{% include 'observation_planner.html' %}
 
 
 <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
 <div class="container"> 
     <div class="row" id="MySplitter">
         <div class="col-md-6">
+            
             <h4>
                 Available Targets
             </h4>
             <ul class="list-group">
+                
                 {% for target in objects %}
             
                
@@ -31,46 +34,43 @@
                             <h5><nobr class="bi-eye"> XX.XXpm - XX.XXam</nobr></h5>
                         </div>
                         <span>
-                        <h6>Orbital Data</h6>
+                        <h6>Target Data</h6>
+                        {% if target.type == "DSO" %}
+                        Right Ascension: {{target.right_ascension|floatformat:"1"}}°<br>
+                        Declination: {{target.declination|floatformat:"1"}}°<br>
+                        Magnitude: {{target.magnitude|floatformat:"1"}}<br>
+                        {% elif target.type == "PL" %}
                         Semi-Major Axis: {{target.semimajor_axis}}<br>
                         Eccentricity: {{target.eccentricity}}<br>
                         Inclination: {{target.inclination}}<br>
                         Ecliptic Longitude: {{target.longitude}}<br>
+                        {% endif %}
                         <br>
-                        <a href="#" class="btn btn-outline-primary" style="bg-color: red;"><nobr class="bi-caret-right-fill"> Observation Planner</nobr></a>
-
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#observationPlanner">
+                            Observation Planner
+                        </button>
+                        
                         </span>
                     </li>
                  
                 {% endfor %}
             </ul>
+            
         </div>
+        
         <div class="col-md-6" name="render">
             <h4>
                 Telescope Status
             </h4>
             <h3 style="color:red;"> Disconnected </h3>
             <a href="#" class="btn btn-outline-primary" style="bg-color: green;"><nobr class="bi-power"><b>  Connect</b></nobr></a>
-            <a data-toggle="modal" data-target="#exampleModal" class="btn btn-outline-secondary" style="bg-color: green;"><nobr class="bi-gear"> Connection Settings</nobr></a>
-            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                      </button>
-                    </div>
-                    <div class="modal-body">
-                      ...
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                      <button type="button" class="btn btn-primary">Save changes</button>
-                    </div>
-                  </div>
-                </div>
-              </div>           <br>
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#configWindow">
+                Connection Settings
+            </button>
+            {% include 'config_window.html' %}
+            <!-- Modal -->
+                    <br>
             <script async src="https://unpkg.com/es-module-shims@1.3.6/dist/es-module-shims.js"></script>
             
 		<script type="importmap">

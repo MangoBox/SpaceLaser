@@ -24,7 +24,7 @@ with open(file_name, 'r') as planets:
     for target in csv_reader:
         if target_count != 0:
             #Insert data into field.
-            p = models.Target()
+            p = models.SolarTarget()
             p.title = target[0]
             p.centre_body = target[1].upper()
             p.type = "PL"

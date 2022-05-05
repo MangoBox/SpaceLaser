@@ -13,13 +13,14 @@
   </head>
   {% load static %}
   <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark" style="padding: 1rem;">
-    <img src="{% static 'scope_logo_white.png' %}" height="40px" />
-    <a class="navbar-brand" href="#">LAASOT Control</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+
   
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <img src="{% static 'scope_logo_white.png' %}" height="40px" />
+      <a class="navbar-brand" href="#">LAASOT Control</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
       <ul class="navbar-nav mr-auto">
         <li class="nav-item active">
           <a class="nav-link" href="#">Dashboard</span></a>
@@ -39,6 +40,16 @@
           </div>
         </li>
       </ul>
+      <form class="form-inline my-4 my-lg-0" action="/split" method="get">{% csrf_token %}
+        <ul class="navbar-nav mr-auto">
+          <li>
+            <input id="item" class="form-control mr-sm-2" type="search" placeholder="Find a Target" aria-label="Search">
+          </li>
+          <li>
+            <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Search</button>
+          </li>
+        </ul>
+      </form>
     </div>
   </nav>
   <body>
