@@ -65,7 +65,7 @@ planet_df = pd.DataFrame(columns=["name", "centre_body", "a", "e", "i", "w", "Om
 
 
 # For other bodies (to be called for live script)
-name = "599"
+name = "*"
 
 query_link = request_base
 query_link += "&MAKE_EPHEM=YES"
