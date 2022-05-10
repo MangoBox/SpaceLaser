@@ -91,7 +91,8 @@
 			import { GLTFLoader } from 'https://unpkg.com/three/examples/jsm/loaders/GLTFLoader.js';
 			import { RGBELoader } from 'https://unpkg.com/three/examples/jsm/loaders/RGBELoader.js';
 
-			let camera, scene, renderer, light, hemiLight, modelObj, clock;
+			let camera, scene, renderer, light, hemiLight, clock;
+			var modelObj;
 
 			init();
 			animate();
@@ -127,11 +128,12 @@
 						const loader = new GLTFLoader().setPath( '../static/' );
 						loader.load( 'model.glb', function ( gltf ) {
 							//gltf.scene.scale = 0.1;
-							let o = gltf.scene;
-							o.scale.set(0.01,0.01,0.01);
-							scene.add(o);
-							modelObj = o;
 							
+							modelObj = gltf.scene;
+							modelObj.scale.set(0.01,0.01,0.01);
+							
+							scene.add(modelObj);
+							//console.log(modelObj.rotation.x);
 							animate();
 
 						} );
@@ -186,8 +188,9 @@
 
 			//
 			let r = 100;
+			
 			function animate() {
-				
+				//modelObj.rotation.x = 90;
 				renderer.render(scene,camera);
 				//modelObj.scale.set(r--, 1, 1);
 				requestAnimationFrame(animate);
