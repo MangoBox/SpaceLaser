@@ -59,8 +59,8 @@ for i in range(len(queries.index)):
 planet_df.to_csv(planets_filepath, mode='a', index=False, header=False)
 
 
-"""# For other bodies (to be called for live script)
-name = "599"
+# For other bodies (to be called for live script)
+name = "*"
 
 query_link = request_base
 query_link += "&MAKE_EPHEM=YES"
