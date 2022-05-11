@@ -21,3 +21,7 @@ struct horizon_co {
     String date;
     String time;
 };
+
+//Defining Steppers
+AccelStepper stepper1; // Defaults to AccelStepper::FULL4WIRE (4 pins) on 2, 3, 4, 5
+AccelStepper stepper2(AccelStepper::FULL4WIRE, 6, 7, 8, 9);
