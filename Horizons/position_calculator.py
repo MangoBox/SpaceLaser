@@ -2,7 +2,6 @@ import datetime
 import math
 import pandas as pd
 from pathlib import Path
-import serial
 
 class planet:
     def __init__(self, name, planetsdf):
@@ -24,7 +23,7 @@ class planet:
         
         dtLCLutc = dtLCL + tzdiff
         diff  = dtLCLutc - self.dtInit
-        diff  = dtLCLutc - self.dtInit
+        
         
         # CONVERT DIF TO A DECIMAL POINT
         diff_float = diff.total_seconds()/(60*60*24) # In Days
@@ -160,52 +159,50 @@ def findCoords_short(RA, DEC, obs_time, tzdiff, earth, latitude):
     return A, h
     # Finds A and h from Right Ascenion and Declination
 
-
 ### MAIN SCRIPT
-latitude = -34
-longlitude = 151
-# Intialise location
 
-filepath_init = Path(r'C:\Users\chess\OneDrive\Documents\GK_Clone_Place\SpaceLaser\Horizons\planets.csv') # HUGH  #filepath_results = Path('output_data.csv')  
-filepath_results = Path(r'C:\Users\chess\OneDrive\Documents\GK_Clone_Place\SpaceLaser\Horizons\temp.csv')
+#filepath_init = Path(r'C:\Users\chess\OneDrive\Documents\GK_Clone_Place\SpaceLaser\Horizons\planets.csv')  
+#filepath_results = Path(r'C:\Users\chess\OneDrive\Documents\GK_Clone_Place\SpaceLaser\Horizons\temp.csv')
+filepath_init = Path('/Users/jacobsolsky/Documents/GitHub/SpaceLaser/Horizons/planets.csv')
+filepath_results = Path('/Users/jacobsolsky/Documents/GitHub/SpaceLaser/Horizons/temp.csv')
 
 planetsdf = pd.read_csv(filepath_init)
 planetsdf = planetsdf.set_index("name")
 
+# INPUT PARAMETERS
 planet_name = "Mars" # Planet to select from csv file
-planet_selected = planet(planet_name, planetsdf)
-earth = planet('Earth', planetsdf)
-tzdiff = tzDiff() # Time zone difference between LCL and UTC
-dtLCL = datetime.datetime.now()
-
 
 RA = math.radians(22*15 + 58*15/(60) + 4.38*15/(60*60)) #math.radians(22*15 + 58*15/(24*60) + 4.38*15/(24*60*60))
 DEC = math.radians(-8 + 16/(60)+ 5.6/(60*60))
 
-print(findCoords(planet_selected, earth, pd.to_datetime("2022-May-02 03:39:46.190"), tzdiff, latitude, longlitude))
+def main_calc(planet_name):
+    latitude = -34
+    longlitude = 151
+    dtLCL = datetime.datetime.now()
+    tzdiff = tzDiff()
 
-A, h = findCoords(planet_selected, earth, dtLCL, tzdiff, latitude, longlitude)
-df = pd.DataFrame({
-    "A": [A],
-    "h": [h],
-    "time": [dtLCL]
-})
+    planet_selected = planet(planet_name, planetsdf)
+    earth = planet('Earth', planetsdf)
 
-df.to_csv(filepath_results)
+    df = pd.DataFrame()
 
-'''for j in range(50):
-    dtLCL = datetime.datetime.now() + j * datetime.timedelta(minutes = 5) # Local time
-    A, h = findCoords(planet_selected, earth, dtLCL, tzdiff, latitude, longlitude)
-    df2 = pd.DataFrame({
-        "A": [A],
-        "H": [h],
-        "time": [dtLCL]
-    },
-    index = [j])
+    for j in range(288):
+        dtLCL = datetime.datetime.now() + j * datetime.timedelta(minutes = 5) # Local time
+        A, h = findCoords(planet_selected, earth, dtLCL, tzdiff, latitude, longlitude)
+        df2 = pd.DataFrame({
+            "A": [A],
+            "h": [h],
+            "time": [dtLCL]
+        },
+        index = [j])
 
-    last_index = j 
-    df = pd.concat([df, df2])
-#df.to_csv(filepath_results)'''
+        last_index = j 
+        df = pd.concat([df, df2])
+
+    #df.to_csv(filepath_results)
+    print(df)
+
+main_calc(planet_name)
 
 
 

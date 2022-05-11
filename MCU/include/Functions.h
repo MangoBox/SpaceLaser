@@ -2,7 +2,18 @@
 /*****************************************************************
 FUNCTIONS
 *****************************************************************/
+/*****************************************************************
+FUNCTIONS WE NEED TO BUILD:
+Current velocity
+Calc Current pos
+Defining path
+Protection for motors and laser.
+*****************************************************************/
 
+
+/*****************************************************************
+MOTOR FUNCTIONS
+*****************************************************************/
 //Calculating the difference between horizon coordinates
 horizon_co calulate_delta(horizon_co current_co, horizon_co future_co){
     /*Local variable*/
@@ -22,6 +33,22 @@ void Deg_to_Step (horizon_co DCoor[], horizon_co SCoor[]){
     }
 };
 
+
+/*****************************************************************
+COMMUNICATION FUNCTIONS
+*****************************************************************/
+// Initialisation
+void Initialisation (void){
+    //getting interval
+    String T_interval_S = Serial.readStringUntil (',');
+    char T_interval_CA[20];
+    T_interval_S.toCharArray(T_interval_CA, 20);
+    T_interval = std :: atoi (T_interval_CA);
+    //getting current date
+    CURRENT_DATE = Serial.readStringUntil (',');
+    Serial.println ("interval = " + T_interval_S + "\nCurrent date = " + CURRENT_DATE);
+}
+
 // String extraction function
 horizon_co String_strtok (char input_string[], bool print_outputs){
 
@@ -33,45 +60,32 @@ horizon_co String_strtok (char input_string[], bool print_outputs){
     token = strtok(input_string, ",");
     extracted_data.az = std :: atof (token);
     
-    if (print_outputs){
-        Serial.print ("az token = ");
-        Serial.println (token);
-        Serial.print ("az output = ");
-        Serial.println (extracted_data.az, 6);
-        Serial.println (); 
-    }
-
     //Extracting Altitude
     token = strtok(NULL, ",");
     extracted_data.alt = std :: atof (token);
-
-    if (print_outputs){
-        Serial.print ("alt token = ");
-        Serial.println (token);
-        Serial.print ("alt output = ");
-        Serial.println (extracted_data.alt, 6);
-        Serial.println (); 
-    }
 
     //Extracting Date
     token = strtok(NULL, ",");
     extracted_data.date = token;
 
-    if (print_outputs){
-        Serial.print ("Date token = ");
-        Serial.println (token);
-        Serial.print ("Date output = ");
-        Serial.println (extracted_data.date);
-        Serial.println (); 
-    }
-
     //Extracting Time
     token = strtok(NULL, ",");
     extracted_data.time = token;
 
+    //sending extracted data back to main program
     if (print_outputs){
-        Serial.print ("time token = ");
-        Serial.println (token);
+        Serial.print ("az output = ");
+        Serial.println (extracted_data.az, 6);
+        Serial.println (); 
+
+        Serial.print ("alt output = ");
+        Serial.println (extracted_data.alt, 6);
+        Serial.println (); 
+
+        Serial.print ("Date output = ");
+        Serial.println (extracted_data.date);
+        Serial.println (); 
+
         Serial.print ("time output = ");
         Serial.println (extracted_data.time);
         Serial.println (); 
@@ -80,20 +94,7 @@ horizon_co String_strtok (char input_string[], bool print_outputs){
     return extracted_data;
 }
 
-//Format check for recieved data
-int format_check (){
+//Format check for recieved data USING REGEX
+/*int format_check (){
 
-}
-
-
-
-/*****************************************************************
-FUNCTIONS WE NEED TO BUILD:
-Caclculating Acceleration
-Calc Deceleration?
-Current velocity
-Communication x 7
-Calc Current pos
-Defining path
-Protection for motors and laser.
-*****************************************************************/
+}*/

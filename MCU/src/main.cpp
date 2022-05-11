@@ -24,44 +24,50 @@ void setup(){
 void loop(){
     //Local variables
     struct horizon_co current_co, delta_co ;
+    //Delcaring main data storage variable
+    struct horizon_co recieved_co [NUM_DATAPT];
+    //case variables
+    char key = 'z';
+    String Raw_Data_S;
+    char Raw_Data [55];
+    // Find how to make i only run once here
     
-    /****************************************************
+    /*****************************************************************
      * Recieving Data from computer
-    ****************************************************/
+    *****************************************************************/
     // START WITH A WHILE AND THEN MOVE TO IF MAYBE
     //timer interput EXAMPLE IS BLINK WITHOUT DELAY SERIAL WITHOUT WAITING
     // LOOK UP SERIAL INERUPT
+
     while(Serial.available() == 0){
     }
-    
-    // Recieving number of data sets being sent and time interval (ms)
-    //NUM_DATAPT = Serial.readStringUntil (',').toInt();
-    //T_interval = Serial.readStringUntil ('\r').toInt();
+
+    key = Serial.read();
+
+    switch (key){
+        //Getting date / time / time interval
+        case 'a': Initialisation (); 
+            i = 0;
+            break;
+        
+        // Extracting data new data
+        case 'b': Raw_Data_S = Serial.readStringUntil('\r');
+            Raw_Data_S.toCharArray(Raw_Data, 55);
+            recieved_co[i] = String_strtok (Raw_Data, Strtok_outputs); 
+            i ++;
+            break;
+        
+        default: 
+            break;
+    }
+
 
     //ERROR CHECK USING REGEX. First save as string and pattern match.
 
-    //Delcaring main data storage variable
-    struct horizon_co recieved_co [NUM_DATAPT];
-
-    // Extracting data
-    String Raw_Data_S;
-    char Raw_Data [55];
-    for (int i = 0; i < NUM_DATAPT; i ++){
-        Raw_Data_S = Serial.readStringUntil('\r');
-        //delay (30);
-        Serial.print ("raw data = ");
-        Serial.println (Raw_Data_S);
-        // Do a REGEX check here
-        Raw_Data_S.toCharArray(Raw_Data, 55);
-        recieved_co[i] = String_strtok (Raw_Data, Strtok_outputs);  
-        Serial.print ("az / alt = ");
-        Serial.print (recieved_co[i].az);
-        Serial.print(", ");
-        Serial.println(recieved_co[i].alt);
-    }
-    /****************************************************
+    
+    /*****************************************************************
      * TESTING WITH HARD CODED DATA
-    ****************************************************/
+    *****************************************************************/
     if (Using_hardcode){
         char Raw_Data_1[55] = "133.193231,-27.095697,2022-04-29,22:07:06";
         char Raw_Data_2[55] = "180.123433,-95.900123,2022-04-29,22:07:11";
