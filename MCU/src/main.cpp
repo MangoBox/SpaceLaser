@@ -4,6 +4,7 @@
 #include<string.h>
 #include <iostream>
 #include <cstdlib>
+#include <arduino-timer.h>
 //Motor thingo 
 #include <AccelStepper.h>
 //Our header files
@@ -31,7 +32,7 @@ void setup(){
 
 void loop(){
     //Local variables
-    struct horizon_co current_co, delta_co ;
+    struct horizon_co delta_co ;
     //Delcaring main data storage variable
     struct horizon_co recieved_co [NUM_DATAPT];
     //case variables
@@ -40,12 +41,13 @@ void loop(){
     char Raw_Data [55];
     // Find how to make i only run once here
     
-    /*****************************************************************
-     * Recieving Data from computer
-    *****************************************************************/
+/*****************************************************************
+ * Recieving Data from computer
+*****************************************************************/
     // START WITH A WHILE AND THEN MOVE TO IF MAYBE
     //timer interput EXAMPLE IS BLINK WITHOUT DELAY SERIAL WITHOUT WAITING
     // LOOK UP SERIAL INERUPT
+    //ERROR CHECK USING REGEX. First save as string and pattern match.
 
     while(Serial.available() == 0){
     }
@@ -68,63 +70,30 @@ void loop(){
         default: 
             break;
     }
-
-
-    //ERROR CHECK USING REGEX. First save as string and pattern match.
-
     
-    /*****************************************************************
-     * TESTING WITH HARD CODED DATA
-    *****************************************************************/
-    if (Using_hardcode){
-        char Raw_Data_1[55] = "133.193231,-27.095697,2022-04-29,22:07:06";
-        char Raw_Data_2[55] = "180.123433,-95.900123,2022-04-29,22:07:11";
+    
+/*****************************************************************
+ * MOTOR FUNCTIONS
+*****************************************************************/
+    // Checking time 
+    timer.tick();
+    //Change Direction at limits
+    if(stepper1.distanceToGo() == 0)
+        stepper1.moveTo(-stepper1.currentPosition());
+    if(stepper2.distanceToGo() == 0)
+        stepper2.moveTo(-stepper2.currentPosition());
+    
+    //Stepper movement altitude
+    stepper1.moveTo(recieved_co[next_co].alt);
+    while (stepper1.currentPosition() != (recieved_co[next_co].alt-50)||(recieved_co[next_co].alt +50))
+        stepper1.run();
+    stepper1.stop();
+    stepper1.runToPosition();
 
-        //Extracting Data Strings from raw data
-        Serial.print ("Raw data string 1 = ");
-        Serial.println (Raw_Data_1);
-        
-        recieved_co[1] = String_strtok (Raw_Data_1, Strtok_outputs);
-        Serial.println (recieved_co[1].alt);
-        Serial.println (recieved_co[1].az);
-        delay (5000);
-
-        Serial.print ("Raw data string 2 = ");
-        Serial.println (Raw_Data_2);
-        
-        recieved_co[2] = String_strtok (Raw_Data_2, Strtok_outputs);;
-        Serial.println (recieved_co[2].alt);
-        Serial.println (recieved_co[2].az);
-        delay (5000);
-
-        //Calulating the speed of az and alt (deg/ms)
-        delta_co = calulate_delta (recieved_co[1], recieved_co[2]);
-        Serial.print ("delta az = ");
-        Serial.println (delta_co.az, 10);
-        Serial.print ("delta alt = ");
-        Serial.println (delta_co.alt, 10);
-        delay (5000);
-
-        //Change Direction at limits
-        if(stepper1.distanceToGo() == 0)
-            stepper1.moveTo(-stepper1.CurrentPostion);
-        if(stepper2.distanceToGo() == 0)
-            stepper2.moveTo(-stepper1.CurrentPostion);
-        
-        //Stepper movement altitude
-        stepper1.moveTo(recieved_co[1].alt)
-        while (stepper1.currentPosition() != (recieved_co[1]-50)||(recieved_co+50))
-            stepper1.run();
-        stepper1.stop();
-        stepper1.runToPostion();
-        stepper1.moveTo(recieved_co[1].alt);
-
-        //Stepper movement azimuth
-        while (stepper2.currentPosition() != (recieved_co[1]-50)||(recieved_co+50))
-            stepper2.run();
-        stepper2.stop();
-        stepper2.runToPostion();
-        stepper2.moveTo(recieved_co[1].az);
-
-    }
+    //Stepper movement azimuth
+    stepper2.moveTo(recieved_co[next_co].az);
+    while (stepper2.currentPosition() != (recieved_co[next_co].az-50)||(recieved_co[next_co].az+50))
+        stepper2.run();
+    stepper2.stop();
+    stepper2.runToPosition();
 }

@@ -14,6 +14,12 @@ Protection for motors and laser.
 /*****************************************************************
 MOTOR FUNCTIONS
 *****************************************************************/
+// What position are we moving to?
+bool update_pos(void *){
+    next_co ++;
+    return true;
+}
+
 //Calculating the difference between horizon coordinates
 horizon_co calulate_delta(horizon_co current_co, horizon_co future_co){
     /*Local variable*/
@@ -44,6 +50,7 @@ void Initialisation (void){
     char T_interval_CA[20];
     T_interval_S.toCharArray(T_interval_CA, 20);
     T_interval = std :: atoi (T_interval_CA);
+    timer.every (T_interval, update_pos);
     //getting current date
     CURRENT_DATE = Serial.readStringUntil (',');
     Serial.println ("interval = " + T_interval_S + "\nCurrent date = " + CURRENT_DATE);
