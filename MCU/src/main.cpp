@@ -19,6 +19,14 @@ void setup(){
     //Starting serial
     Serial.begin(baud_rate);
     Serial.setTimeout (wait_period);
+
+    //Set max turning speeds
+    stepper1.setMaxSpeed(40.0);
+    stepper2.setMaxSpeed(40.0);
+
+    //Set accelerations
+    stepper1.setAcceleration(20.0);
+    stepper2.setAcceleration(20.0);
 }
 
 void loop(){
@@ -96,5 +104,27 @@ void loop(){
         Serial.print ("delta alt = ");
         Serial.println (delta_co.alt, 10);
         delay (5000);
+
+        //Change Direction at limits
+        if(stepper1.distanceToGo() == 0)
+            stepper1.moveTo(-stepper1.CurrentPostion);
+        if(stepper2.distanceToGo() == 0)
+            stepper2.moveTo(-stepper1.CurrentPostion);
+        
+        //Stepper movement altitude
+        stepper1.moveTo(recieved_co[1].alt)
+        while (stepper1.currentPosition() != (recieved_co[1]-50)||(recieved_co+50))
+            stepper1.run();
+        stepper1.stop();
+        stepper1.runToPostion();
+        stepper1.moveTo(recieved_co[1].alt);
+
+        //Stepper movement azimuth
+        while (stepper2.currentPosition() != (recieved_co[1]-50)||(recieved_co+50))
+            stepper2.run();
+        stepper2.stop();
+        stepper2.runToPostion();
+        stepper2.moveTo(recieved_co[1].az);
+
     }
 }
