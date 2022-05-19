@@ -1,49 +1,63 @@
 import serial
 import time
 import pandas as pd
+import datetime
 from pathlib import Path
 
-file_path = Path(r'C:\Users\chess\OneDrive\Documents\GK_Clone_Place\SpaceLaser\Horizons\temp.csv')
+file_path = Path(r'C:\\Users\\mango\\Documents\\Git Repos\\SpaceLaser\\Horizons\\temp.csv')
+#file_path = Path('/Users/jacobsolsky/Documents/GitHub/SpaceLaser/Horizons/temp.csv')
 df = pd.read_csv(file_path)
-print(df)
 
 # COMMUNICATION
-teensy = serial.Serial('COM4', 9600) # HUGH
-teensy.timeout = 1
+def start_teensy(com_port):
+    teensy = serial.Serial(com_port, 9600) # com_port is a string specifying the com port (e.g. "COM4")
+    teensy.timeout = 1
+    return teensy
 
-while True:
-    #data_init = str(df.loc[0][2]) + "," + str(5*60*1000) +"\r" # Start datetime, Incremenet in minutes
-    #teensy.write(data_init.encode())
-    data = str(df.loc[0][0]) + "," + str(df.loc[0][1]) + "\r" # A, h
-    teensy.write(data.encode())
-    time.sleep(0.5)
-    print(teensy.readline().decode('ascii'))
-    time.sleep(0.5)
-    print(teensy.readline().decode('ascii'))
-    break
+def close_teensy(teensy):
+    teensy.close()
 
-teensy.close()
+def new_obs(teensy, temp_filepath):
+    file_path = Path(temp_filepath) #Temp is where the values from the calulation or API call are stored
+    df = pd.read_csv(file_path)
 
+    while True:
+        data_init = "a" + str(5*60*1000) + "," + str(df.loc[0][0]) + "," + str(df.loc[0][1]) + "," + str(df.loc[0][2]) + "\r" # Interval, Azimuth, height, datetime (first datapoint)
+        time.sleep(0.5)
 
-# send_next = datetime.datetime.now() + datetime.timedelta(minutes = 5)
+        print(teensy.readline().decode('ascii'))
 
+        for i in range(len(df)):
+            send_next = datetime.datetime.now() + datetime.timedelta(minutes = 5)
+            df2 = df.iloc[i]
 
-"""x = True
-while x == True:
-    if send_next < datetime.datetime.now():
-        dtLCL = datetime.datetime.now() + last_index * datetime.timedelta(minutes = 5)
-        A, h = findCoords(planet_selected, earth, dtLCL, tzdiff, latitude, longlitude)
-        df2 = pd.DataFrame({
-            "A": [A],
-            "H": [h],
-            "time": [dtLCL.time()]
-        },
-        index = [last_index + 1])
-        df = pd.concat([df, df2])
-        last_index = last_index + 1
-        print(df2)
-        send_next = datetime.datetime.now() + datetime.timedelta(minutes = 5)
+            while True:
+                if exit == True:
+                    break
 
-        df2.to_csv(filepath_results, mode='a', index=True, header=False)
-        x = False
-"""
+                if send_next < datetime.datetime.now():
+                    data = "b\r" + str(df2.loc[0][0]) + "," + str(df2.loc[0][1]) + "," + str(df.loc[0][2]) +  "\r"
+                    teensy.write(data.encode())
+                    
+                time.sleep(0.5)
+                if(teensy.readline().decode('ascii') != ""):
+                    print(teensy.readline().decode('ascii'))
+            
+            if exit == True:
+                break
+ 
+        data = "c\r"
+        teensy.write(data_init.encode())
+        time.sleep(0.5)
+        
+        break
+
+        # a = initialisation
+        # b = send next data points
+        # c = exit 
+
+com_port = "COM4" #CHANGE THIS
+
+teensy = start_teensy(com_port)
+new_obs(teensy, file_path)
+close_teensy(teensy)

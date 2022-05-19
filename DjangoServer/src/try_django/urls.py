@@ -36,6 +36,8 @@ urlpatterns = [
     path('targets/', all_targets),
     path('targets/<int:target_id>', get_target),
     path('split', split_view),
+    path('split/connect', split_view),
+    path('split/disconnect', split_view),
     path('render/', tower),
     #path('targets/', get_target),
     path('contact/', contact_page),

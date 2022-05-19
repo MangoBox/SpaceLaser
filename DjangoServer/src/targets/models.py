@@ -1,12 +1,5 @@
 from django.db import models
 
-class Telescope(models.Model):
-    port = models.CharField(max_length=10)
-    baud_rate = models.IntegerField()
-
-    cur_alt = models.DecimalField(max_digits=10, decimal_places=5)
-    cur_az  = models.DecimalField(max_digits=10, decimal_places=5)
-
 class Target(models.Model):
     class Meta:
         abstract = True

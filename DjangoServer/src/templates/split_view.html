@@ -62,8 +62,20 @@
             <h4>
                 Telescope Status
             </h4>
-            <h3 style="color:red;"> Disconnected </h3>
-            <a href="#" class="btn btn-outline-primary" style="bg-color: green;"><nobr class="bi-power"><b>  Connect</b></nobr></a>
+            
+
+			{% if telescope == None %}
+			<h3 style="color:red;">
+				Disconnected
+			</h3>
+			<a href="/split/connect" class="btn btn-outline-primary" style="bg-color: green;"><nobr class="bi-power"><b>  Connect</b></nobr></a>
+			{% else %}
+			<h3 style="color:green;">
+				Connected
+			</h3>
+			<a href="/split/disconnect" class="btn btn-outline-primary" style="bg-color: red;"><nobr class="bi-power"><b>  Disconnect</b></nobr></a>
+			{% endif %}
+            
             <!-- Button trigger modal -->
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#configWindow">
                 Connection Settings
