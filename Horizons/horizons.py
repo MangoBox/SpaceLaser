@@ -9,7 +9,7 @@ from pathlib import Path
 #sb_filepath_input = Path('/Users/jacobsolsky/Documents/GitHub/SpaceLaser/Horizons/smallbodies.csv')
 #sb_filepath_output = Path('/Users/jacobsolsky/Documents/GitHub/SpaceLaser/Horizons/smallbodies_transformed.csv')
 
-url = 'https://ssd.jpl.nasa.gov/api/horizons_file.api'
+url = 'https://ssd.jpl.nasa.gov/api/horizons_file.api' 
 file = 'documents/GitHib/SpaceLaser/input.txt'
 
 sb_filepath_input = Path('/Users/jacobsolsky/Documents/GitHub/SpaceLaser/Horizons/smallbodies.csv')
@@ -51,6 +51,8 @@ path_output = 'planets.csv'
 path_queries = 'Horizons_queries.csv'
 # Pulling latest planet data 
 
+# THis function processes multiple queries cointainign the name and jpl id in a csv file
+# stores keplarian elements in planets.csv
 def planet_query(path_queries, path_output):
     queries_filepath = Path(path_queries) 
     planets_filepath = Path(path_output)
@@ -92,9 +94,13 @@ def planet_query(path_queries, path_output):
 
     planet_df.to_csv(planets_filepath, mode='a', index=False, header=False)
 
-path_RA_DEC = 'RA_DEC.csv'
+
+
+path_RA_DEC = 'RA_DEC.csv' #This is the output file
 
 # For other bodies (to be called for live script)
+# This finds the right ascenetion and declination of an object for the next 24 hours
+# Takes input of the object name and jpl horizon ID
 def jpl_request(name, jpl_id, path_RA_DEC):
 
     path_RA_DEC = Path(path_RA_DEC)

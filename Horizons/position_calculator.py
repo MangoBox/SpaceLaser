@@ -193,7 +193,7 @@ def main_calc_planet(planet_name, filepath_planets, filepath_results):
 
     df.to_csv(filepath_results)
 
-def main_calc_RA_DEC(path_RA_DEC, filepath_planets, filepath_results):#
+def main_calc_RA_DEC(path_RA_DEC, filepath_planets, filepath_results): #Converts RA and DEC from a csv file to to height and azimuth, used to track objects where RA and DEC is changing (eg, planet)
     latitude = -34
     longlitude = 151
     dtLCL = datetime.datetime.now()
@@ -227,7 +227,7 @@ def main_calc_RA_DEC(path_RA_DEC, filepath_planets, filepath_results):#
 
     df.to_csv(filepath_results, mode="w", index=False, header=True)
 
-def main_calc_stars(RA, DEC, filepath_planets, filepath_results):
+def main_calc_stars(RA, DEC, filepath_planets, filepath_results): #Converts static RA and DEC to height and azimuth (eg. stars)
     latitude = -34
     longlitude = 151
     dtLCL = datetime.datetime.now()
@@ -270,6 +270,7 @@ filepath_results = 'temp.csv'
 #main_calc_stars(6.75, -16.75, filepath_planets, filepath_results)
 
 
+# This is a demo which will store the height and azimuth and time results into temp.csv
 selection = input("1. planet \n2. star \n3. jpl query\n")
 if (selection ==  "1"):
     planet_selected = input("name of planet: ")

@@ -56,8 +56,9 @@ def new_obs(teensy, temp_filepath):
         # b = send next data points
         # c = exit 
 
-com_port = "COM4" #CHANGE THIS
+com_port = "COM4" #For testing
 
+# Testing the serial communication usign sample data
 teensy = start_teensy(com_port)
 new_obs(teensy, file_path)
 close_teensy(teensy)
