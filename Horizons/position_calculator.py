@@ -262,14 +262,6 @@ path_RA_DEC = 'RA_DEC.csv'
 filepath_planets = 'planets.csv'
 filepath_results = 'temp.csv'
 
-#main_calc_RA_DEC(path_RA_DEC, filepath_results)
-#earth = planet('Earth', filepath_planets)
-
-#main_calc_planet("Mars", filepath_planets, filepath_results)
-
-#main_calc_stars(6.75, -16.75, filepath_planets, filepath_results)
-
-
 # This is a demo which will store the height and azimuth and time results into temp.csv
 selection = input("1. planet \n2. star \n3. jpl query\n")
 if (selection ==  "1"):
